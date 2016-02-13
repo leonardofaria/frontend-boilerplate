@@ -1,0 +1,23 @@
+{
+  "name": "GulpQuickStart",
+  "version": "0.0.1",
+  "description": "This is my simple workflow to start new projects",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Leonardo Faria",
+  "license": "ISC",
+  "devDependencies": {
+    "browser-sync": "^2.11.1",
+    "gulp": "^3.8.8",
+    "gulp-concat": "^2.6.0",
+    "gulp-notify": "^1.6.0",
+    "gulp-ruby-sass": "^0.7.1",
+    "gulp-uglifyjs": "^0.6.2",
+    "rsyncwrapper": "^0.4.2"
+  },
+  "dependencies": {
+    "normalize-scss": "^4.0.3",
+    "support-for": "^1.0.3"
+  }
+}
