@@ -10,13 +10,15 @@
   "devDependencies": {
     "browser-sync": "^2.11.1",
     "gulp": "^3.8.8",
+    "gulp-autoprefixer": "^3.1.0",
     "gulp-concat": "^2.6.0",
+    "gulp-cssnano": "^2.1.1",
+    "gulp-filter": "^3.0.1",
     "gulp-notify": "^1.6.0",
     "gulp-ruby-sass": "^0.7.1",
     "gulp-uglifyjs": "^0.6.2",
-    "rsyncwrapper": "^0.4.2"
-  },
-  "dependencies": {
+    "gulp-util": "^3.0.7"
+    "rsyncwrapper": "^0.4.2",
     "normalize-scss": "^4.0.3",
     "support-for": "^1.0.3"
   }

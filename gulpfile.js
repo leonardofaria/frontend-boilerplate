@@ -1,37 +1,84 @@
 var gulp = require('gulp'), 
-    sass = require('gulp-ruby-sass') ,
-    notify = require("gulp-notify") ,
-    uglify = require('gulp-uglifyjs'),
+    autoprefixer = require('gulp-autoprefixer'),
     concat = require('gulp-concat'),
-    browserSync = require('browser-sync'),
+    cssnano = require('gulp-cssnano'),
+    gulpFilter = require('gulp-filter'),
+    notify = require("gulp-notify") ,
+    sass = require('gulp-ruby-sass') ,
+    sourcemaps = require('gulp-sourcemaps'),
+    uglify = require('gulp-uglifyjs'),
+    util = require('gulp-util'),
+    browserSync = require('browser-sync').create(),
     rsync = require('rsyncwrapper').rsync;
 
 var config = {
-  sassPath: './resources/sass',
-  jsPath: './resources/js',
+  cssPath: './resources/sass',
    supportforDir: './node_modules/support-for/sass' ,
    normalizeDir: './node_modules/normalize-scss/sass' ,
+  jsPath: './resources/js',
+  dest: './public'
 };
+
+var sassOptions = {
+  loadPath: [
+    config.supportforDir, // required by normalize
+    config.normalizeDir,
+  ]
+};
+
+// inspired by https://github.com/mikaelbr/gulp-notify/issues/81
+var reportError = function (error) {
+  var lineNumber = (error.lineNumber) ? 'LINE ' + error.lineNumber + ' -- ' : '';
+
+  notify({
+    title: 'Task Failed [' + error.plugin + ']',
+    message: lineNumber + "\n" + error.message,
+    sound: 'Glass' // all sounds: http://bit.ly/1XLJkJ3
+  }).write(error);
+
+  var report = '';
+  var chalk = util.colors.white.bgRed;
+
+  report += chalk('TASK:') + ' [' + error.plugin + ']\n';
+  report += chalk('PROB:') + ' ' + error.message + '\n';
+  if (error.lineNumber) { report += chalk('LINE:') + ' ' + error.lineNumber + '\n'; }
+  if (error.fileName)   { report += chalk('FILE:') + ' ' + error.fileName + '\n'; }
+  console.error(report);
+
+  // Prevent the 'watch' task from stopping
+  this.emit('end');
+}
 
 gulp.task('rsync', function() {
   rsync({
-    src: './public/',
+    src: config.dest,
     ssh: true,
     dest: 'user@server:~/path/to/folder',
     port: 22,
     recursive: true,
     deleteAll: true,
     exclude: ['.DS_Store'],
-    args: [ '--verbose' ]
+    args: [ '--verbose' ],
   }, function(error, stdout, stderr, cmd) {
-    console.log('error: ' + error);
-    console.log('stdout: ' + stdout);
-    console.log('stderr: ' + stderr);
-  });
+    if (error) {
+      var report = '';
+      var chalk = util.colors.white.bgRed;
+
+      report += chalk('CMD:') + " " + cmd + "\n"
+      report += chalk('ERROR:') + " " + error + "\n"
+      report += chalk('STDERR:') + " " + stderr + "\n"
+      console.error(report)
+    } else {
+      console.log(stdout);
+    }
+  })
 });
 
-gulp.task('server', function() {
-  browserSync({
+gulp.task('serve', function() {
+  browserSync.init({
+    // uncomment the next line if you have already a webserver
+    // proxy: "http://127.0.0.1",
+    // serving files from public folder
     server: {
       baseDir: 'public'
     }
@@ -39,35 +86,37 @@ gulp.task('server', function() {
 });
 
 gulp.task('js', function () {
-  gulp.src([config.jsPath + '/app.js'])
-  .pipe(uglify('app.js', {
-    mangle: false,
-    output: {
-      beautify: true
-    }
-  }))
-  .pipe(gulp.dest('./public/js'))
+  return gulp.src([
+      config.jsPath + '/*js',
+      // you can also specifify the files in a particular order
+      // config.jsPath + '/app.js'
+    ])
+    .pipe(uglify())
+    .pipe(concat({ path: 'app.js' }))
+    .pipe(gulp.dest(config.dest + '/js'));
 });
 
 gulp.task('css', function() { 
-  return gulp.src(config.sassPath + '/style.scss')
-    .pipe(sass({
-      style: 'compressed',
-      loadPath: [
-          './resources/sass',
-          config.supportforDir,
-          config.normalizeDir,
-      ]
-    })
-    .on("error", notify.onError(function (error) {
-        return "Error: " + error.message;
-    })))
-    .pipe(gulp.dest('./public/css'));
+  // prevent reading sourcemaps to autoprefix them or make sourcemaps of sourcemaps
+  var filter = gulpFilter(['*.css', '!*.map'], { restore: true });
+
+  return gulp.src(config.cssPath + '/style.scss')
+    .pipe(sass(sassOptions))
+    .on('error', reportError)
+    .pipe(filter)
+    .pipe(autoprefixer({ cascade: true}))
+    .pipe(sourcemaps.init())
+    .pipe(cssnano())
+    .pipe(sourcemaps.write('.'))
+    .pipe(filter.restore)
+    .pipe(gulp.dest(config.dest + '/css'));
 });
 
  gulp.task('watch', function() {
-  gulp.watch(config.sassPath + '/**/*.scss', ['css', browserSync.reload]); 
+  // in a php project the next line should be useful
+  // gulp.watch(config.themePath + '/**/*.php').on('change', browserSync.reload);
+  gulp.watch(config.cssPath + '/**/*.scss', ['css', browserSync.reload]); 
   gulp.watch(config.jsPath + '/**/*.js', ['js', browserSync.reload]); 
 });
 
-  gulp.task('default', ['server', 'watch']);
+  gulp.task('default', ['serve', 'watch']);
