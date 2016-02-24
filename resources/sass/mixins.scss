@@ -1,0 +1,16 @@
+@mixin hide-text{
+  font: 0/0 a;
+  text-shadow: none;
+  color: transparent;
+}
+
+@mixin image-replace($imageURL, $width, $height) {
+  @include hide-text();
+  background: url($imageURL) no-repeat;
+  background-size: $width $height;
+  height: $height;
+  text-indent: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  width: $width;
+}

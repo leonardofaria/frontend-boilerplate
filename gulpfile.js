@@ -13,17 +13,8 @@ var gulp = require('gulp'), 
 
 var config = {
   cssPath: './resources/sass',
-   supportforDir: './node_modules/support-for/sass' ,
-   normalizeDir: './node_modules/normalize-scss/sass' ,
-  jsPath: './resources/js',
+   jsPath: './resources/js',
   dest: './public'
-};
-
-var sassOptions = {
-  loadPath: [
-    config.supportforDir, // required by normalize
-    config.normalizeDir,
-  ]
 };
 
 // inspired by https://github.com/mikaelbr/gulp-notify/issues/81
@@ -101,7 +92,7 @@ gulp.task('css', function() { 
   var filter = gulpFilter(['*.css', '!*.map'], { restore: true });
 
   return gulp.src(config.cssPath + '/style.scss')
-    .pipe(sass(sassOptions))
+    .pipe(sass())
     .on('error', reportError)
     .pipe(filter)
     .pipe(autoprefixer({ cascade: true}))

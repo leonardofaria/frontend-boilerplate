@@ -1,4 +1,7 @@
-@import "normalize/import-now";
+@import "normalize";
+@import "grid";
+@import "mixins";
+@import "util";
 
 /* your style here */
 body {
