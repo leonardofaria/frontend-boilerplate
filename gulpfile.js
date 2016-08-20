@@ -6,6 +6,7 @@ var gulp = require('gulp'), 
     notify = require("gulp-notify") ,
     sass = require('gulp-ruby-sass') ,
     sourcemaps = require('gulp-sourcemaps'),
+    stylelint = require('gulp-stylelint'),
     uglify = require('gulp-uglifyjs'),
     util = require('gulp-util'),
     browserSync = require('browser-sync').create(),
@@ -97,7 +98,7 @@ gulp.task('css', function() { 
     .pipe(sass())
     .on('error', reportError)
     .pipe(filter)
-    .pipe(autoprefixer({ cascade: true}))
+    .pipe(autoprefixer({ cascade: true }))
     .pipe(sourcemaps.init())
     .pipe(cssnano())
     .pipe(sourcemaps.write('.'))
@@ -105,10 +106,17 @@ gulp.task('css', function() { 
     .pipe(gulp.dest(config.dest + '/css'));
 });
 
+gulp.task('css:lint', function() {
+  return gulp.src(config.cssPath + '/style.scss')
+    .pipe(stylelint({
+      reporters: [{ formatter: 'string', console: true }]
+    }))
+});
+
  gulp.task('watch', function() {
   // in a php project the next line should be useful
   // gulp.watch(config.themePath + '/**/*.php').on('change', browserSync.reload);
-  gulp.watch(config.cssPath + '/**/*.scss', ['css', browserSync.reload]); 
+  gulp.watch(config.cssPath + '/**/*.scss', ['css:lint', 'css', browserSync.reload]); 
   gulp.watch(config.jsPath + '/**/*.js', ['js', browserSync.reload]); 
 });
 
