@@ -1,11 +1,13 @@
-@mixin hide-text{
+@mixin text-hide() {
   font: 0/0 a;
-  text-shadow: none;
   color: transparent;
+  text-shadow: none;
+  background-color: transparent;
+  border: 0;
 }
 
 @mixin image-replace($imageURL, $width, $height) {
-  @include hide-text();
+  @include text-hide();
   background: url($imageURL) no-repeat;
   background-size: $width $height;
   height: $height;
