@@ -72,7 +72,9 @@ gulp.task('serve', function() {
     // serving files from public folder
     server: {
       baseDir: 'public'
-    }
+    },
+    // remove the annoying "Connected to Browser Sync" message
+    notify: false
   });
 });
 
