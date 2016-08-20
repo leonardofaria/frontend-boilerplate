@@ -5,6 +5,7 @@ var gulp = require('gulp'), 
     gulpFilter = require('gulp-filter'),
     notify = require("gulp-notify") ,
     sass = require('gulp-ruby-sass') ,
+    shell = require('gulp-shell'),
     sourcemaps = require('gulp-sourcemaps'),
     stylelint = require('gulp-stylelint'),
     uglify = require('gulp-uglifyjs'),
@@ -66,6 +67,10 @@ gulp.task('rsync', function() {
   })
 });
 
+gulp.task('deploy:github', shell.task([
+  'push-dir --dir=public --branch=gh-pages'
+]));
+
 gulp.task('serve', function() {
   browserSync.init({
     // uncomment the next line if you have already a webserver
@@ -94,8 +99,7 @@ gulp.task('css', function() { 
   // prevent reading sourcemaps to autoprefix them or make sourcemaps of sourcemaps
   var filter = gulpFilter(['*.css', '!*.map'], { restore: true });
 
-  return gulp.src(config.cssPath + '/style.scss')
-    .pipe(sass())
+  return sass(config.cssPath + '/style.scss')
     .on('error', reportError)
     .pipe(filter)
     .pipe(autoprefixer({ cascade: true }))

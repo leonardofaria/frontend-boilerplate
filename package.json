@@ -1,7 +1,7 @@
 {
   "name": "frontend-boilerplate",
-  "version": "1.0.0",
-  "description": "This is my simple workflow to start new projects",
+  "version": "1.0.1",
+  "description": "This is a simple workflow to start new projects, focused in performance.",
   "author": "Leonardo Faria",
   "license": "MIT",
   "repository": {
@@ -23,13 +23,15 @@
     "gulp-autoprefixer": "^3.1.0",
     "gulp-concat": "^2.6.0",
     "gulp-cssnano": "^2.1.1",
-    "gulp-filter": "^3.0.1",
-    "gulp-notify": "^1.6.0",
-    "gulp-ruby-sass": "^0.7.1",
+    "gulp-filter": "^4.0.0",
+    "gulp-notify": "^2.2.0",
+    "gulp-ruby-sass": "^2.1.0",
+    "gulp-shell": "^0.5.2",
     "gulp-sourcemaps": "^1.6.0",
     "gulp-stylelint": "^3.1.0",
     "gulp-uglifyjs": "^0.6.2",
     "gulp-util": "^3.0.7",
-    "rsyncwrapper": "^0.4.2"
+    "push-dir": "^0.2.2",
+    "rsyncwrapper": "^1.0.0"
   }
 }
